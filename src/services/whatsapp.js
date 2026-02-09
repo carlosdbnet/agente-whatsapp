@@ -10,8 +10,12 @@ const client = new Client({
     }
 });
 
+// Store QR Code globally to serve via web
+let lastQrCode = null;
+
 client.on('qr', (qr) => {
     console.log('QR RECEIVED', qr);
+    lastQrCode = qr; // Save for web view
     qrcode.generate(qr, { small: true });
 });
 
@@ -127,4 +131,4 @@ client.on('message', async msg => {
     }
 });
 
-module.exports = { client };
+module.exports = { client, getLatestQr: () => lastQrCode };
