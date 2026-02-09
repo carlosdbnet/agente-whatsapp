@@ -28,6 +28,17 @@ const conversationHistory = new Map();
 const MAX_HISTORY_LENGTH = 10; // Keep last 10 messages
 
 client.on('message', async msg => {
+    // Check if we need to filter messages
+    if (process.env.ALLOWED_NUMBERS) {
+        const allowedNumbers = process.env.ALLOWED_NUMBERS.split(',').map(n => n.trim().replace(/\D/g, ''));
+        const sender = msg.from.replace(/\D/g, '');
+
+        // If the sender is not in the allowed list, ignore the message
+        if (!allowedNumbers.includes(sender)) {
+            // Optional: console.log(`Blocked message from ${msg.from}`);
+            return;
+        }
+    }
     // Only process messages with !bot prefix for now, but we'll include history
     // We might want to rethink the prefix if we want a continuous conversation feel
     if (msg.body.startsWith('!bot ')) {
