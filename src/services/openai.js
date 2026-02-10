@@ -8,9 +8,23 @@ const openai = new OpenAI({
 
 async function generateResponse(messages) {
     try {
+        let systemContent = process.env.systema_prompty || process.env.SYSTEM_PROMPT || "Você é um assistente útil e amigável.";
+
+        // Try to read from file if configured
+        if (process.env.SYSTEM_PROMPT_FILE) {
+            try {
+                const filePath = process.env.SYSTEM_PROMPT_FILE;
+                if (fs.existsSync(filePath)) {
+                    systemContent = fs.readFileSync(filePath, 'utf8');
+                }
+            } catch (err) {
+                console.error("Error reading system prompt file:", err);
+            }
+        }
+
         const systemMessage = {
             role: "system",
-            content: process.env.systema_prompty || process.env.SYSTEM_PROMPT || "Você é um assistente útil e amigável."
+            content: systemContent
         };
 
         const completion = await openai.chat.completions.create({
