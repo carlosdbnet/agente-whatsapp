@@ -8,8 +8,13 @@ const openai = new OpenAI({
 
 async function generateResponse(messages) {
     try {
+        const systemMessage = {
+            role: "system",
+            content: process.env.systema_prompty || process.env.SYSTEM_PROMPT || "Você é um assistente útil e amigável."
+        };
+
         const completion = await openai.chat.completions.create({
-            messages: messages,
+            messages: [systemMessage, ...messages],
             model: "gpt-3.5-turbo",
         });
 
